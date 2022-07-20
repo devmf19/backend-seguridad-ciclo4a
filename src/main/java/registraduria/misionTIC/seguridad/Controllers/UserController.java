@@ -1,6 +1,8 @@
 package registraduria.misionTIC.seguridad.Controllers;
 
+import registraduria.misionTIC.seguridad.Models.Role;
 import registraduria.misionTIC.seguridad.Models.User;
+import registraduria.misionTIC.seguridad.Repositories.RoleRepository;
 import registraduria.misionTIC.seguridad.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     public String convertSHA256(String password){
         MessageDigest md = null;
@@ -42,8 +46,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public User create(@RequestBody User newUser){
-        String password = newUser.getContraseña();
-        newUser.setContraseña(convertSHA256(password));
+        String password = newUser.getContrasena();
+        newUser.setContrasena(convertSHA256(password));
         return this.userRepository.save(newUser);
     }
 
@@ -59,7 +63,7 @@ public class UserController {
         if(actualUser != null){
             actualUser.setSeudonimo(infoUser.getSeudonimo());
             actualUser.setCorreo(infoUser.getCorreo());
-            actualUser.setContraseña(infoUser.getContraseña());
+            actualUser.setContrasena(infoUser.getContrasena());
 
             return this.userRepository.save(actualUser);
         } else {
@@ -74,5 +78,13 @@ public class UserController {
         if(actualUser != null){
             this.userRepository.delete(actualUser);
         }
+    }
+
+    @PutMapping("{id_user}/role/{id_role}")
+    public User addRoleToUser(@PathVariable String id_user, @PathVariable String id_role){
+        User user=this.userRepository.findById(id_user).orElse(null);
+        Role rol= this.roleRepository.findById(id_role).orElse(null);
+        user.setRole(rol);
+        return this.userRepository.save(user);
     }
 }

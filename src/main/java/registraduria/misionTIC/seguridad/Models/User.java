@@ -2,6 +2,7 @@ package registraduria.misionTIC.seguridad.Models;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -11,12 +12,23 @@ public class User {
     private String _id;
     private String seudonimo;
     private String correo;
-    private String contraseña;
+    private String contrasena;
 
-    public User(String seudonimo, String correo, String contraseña) {
+    @DBRef
+    private Role role;
+
+    public User(String seudonimo, String correo, String contrasena) {
         this.seudonimo = seudonimo;
         this.correo = correo;
-        this.contraseña = contraseña;
+        this.contrasena = contrasena;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String get_id() {
@@ -43,11 +55,11 @@ public class User {
         this.correo = correo;
     }
 
-    public String getContraseña() {
-        return contraseña;
+    public String getContrasena() {
+        return contrasena;
     }
 
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 }
