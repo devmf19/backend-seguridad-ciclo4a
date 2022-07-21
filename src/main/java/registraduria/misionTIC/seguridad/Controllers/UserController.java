@@ -51,7 +51,7 @@ public class UserController {
         return this.userRepository.save(newUser);
     }
 
-    @GetMapping({"id"})
+    @GetMapping("/{id}")
     public User show(@PathVariable String id){
         User actualUser = this.userRepository.findById(id).orElse(null);
         return actualUser;
@@ -72,7 +72,7 @@ public class UserController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping({"id"})
+    @DeleteMapping("{id}")
     public void delete(@PathVariable String id){
         User actualUser = this.userRepository.findById(id).orElse(null);
         if(actualUser != null){

@@ -11,8 +11,19 @@ public class Role {
     private String id;
     private String nombre;
 
-    public Role(String nombre) {
+    private String descripcion;
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Role(String nombre, String descripcion) {
         this.nombre = nombre;
+        this.descripcion = descripcion;
     }
 
     public String getId() {
