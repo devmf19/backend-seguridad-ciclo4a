@@ -71,5 +71,15 @@ public class PermissionRoleController {
         this.permission_role_repository.deleteById(id);
     }
 
+    @PostMapping("validate/role/{id_role}")
+    public PermissionRole validate(@PathVariable String id_role, @RequestBody Permission info){
+        Permission permission = this.permission_repository.getPermission(info.getUrl(), info.getMetodo());
+        Role role = this.role_repository.findById(id_role).get();
+        if(permission != null && role != null){
+            return this.permission_role_repository.getPermissionRole(role.getId(), permission.getId());
+        }else{
+            return null;
+        }
+    }
 
 }

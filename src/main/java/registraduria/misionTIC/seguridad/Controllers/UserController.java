@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -57,7 +59,7 @@ public class UserController {
         return actualUser;
     }
 
-    @PutMapping({"id"})
+    @PutMapping("/{id}")
     public User update(@PathVariable String id, @RequestBody User infoUser){
         User actualUser = this.userRepository.findById(id).orElse(null);
         if(actualUser != null){
@@ -72,7 +74,7 @@ public class UserController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable String id){
         User actualUser = this.userRepository.findById(id).orElse(null);
         if(actualUser != null){
@@ -80,11 +82,25 @@ public class UserController {
         }
     }
 
-    @PutMapping("{id_user}/role/{id_role}")
+    @PutMapping("/{id_user}/role/{id_role}")
     public User addRoleToUser(@PathVariable String id_user, @PathVariable String id_role){
         User user=this.userRepository.findById(id_user).orElse(null);
         Role rol= this.roleRepository.findById(id_role).orElse(null);
         user.setRole(rol);
         return this.userRepository.save(user);
     }
+
+    @PostMapping("validate")
+    public User validate(@RequestBody User info, final HttpServletResponse response) throws IOException {
+        User user = this.userRepository.getUserByEmail(info.getCorreo());
+        String cipher_password = convertSHA256(info.getContrasena());
+        if(user != null && user.getContrasena().equals(cipher_password)){
+            user.setContrasena("");
+            return user;
+        }else{
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return null;
+        }
+    }
+
 }
